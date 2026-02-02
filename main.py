@@ -1,53 +1,64 @@
-# Item prices are in dollars
+# My hate for Tkinter has grown to a raging fire that burns with
+# the fierce passion of a million suns.
+# Sometimes, I miss Anvil.
+import tkinter as tk
+
 items = {
   "A": 1.2,
   "B": 0.6,
   "C": 0.75,
+  "D": 2.5,
+  "E": 3.25
 }
 
-# Coins are in cents to avoid floating-point imprecision
-coins = [200, 100, 50, 20, 10, 5]
+root = tk.Tk()
+root.title("Vending Machine")
+root.geometry("800x700")
 
-# Ask for purchase letter and check if it exists
-purchase_ltr = input("What item would you like to buy? ").upper()
-if purchase_ltr not in items.keys():
-  print(f"Item {purchase_ltr} does not exist!")
-  exit(1)
+# Headings
+top_frame = tk.Frame(root)
+top_frame.pack(fill="x", padx=10, pady=10)
 
-# Get price of item
-price = items[purchase_ltr]
-print(f"Item {purchase_ltr} costs ${price:.2f}!\n")
+heading = tk.Label(
+  top_frame,
+  text="Vending Machine",
+  font=("Arial", 24, "bold"),
+  anchor="w"
+)
+heading.pack(side="left")
 
-# Get payment from user, with validation check
-try:
-  pay = float(input("How much do you want to pay? "))
-except ValueError:
-  print("The value is not a number!")
-  exit(1)
+product_heading = tk.Label(
+  top_frame,
+  text="Products",
+  font=("Arial", 20, "bold"),
+  anchor="e"
+)
+product_heading.pack(side="right", padx=70)
 
-# Check if payment is too low
-if price > pay:
-  print(f"You didn't pay enough! Item {purchase_ltr} costs ${price:.2f}, but you only paid ${pay:.2f}")
-  exit(1)
+# Buttons frame aligned to the right
+buttons_frame_outer = tk.Frame(root)
+buttons_frame_outer.pack(fill="x", padx=20, pady=20)
 
-print(f"You paid ${pay:.2f}!\n")
+buttons_frame = tk.Frame(buttons_frame_outer)
+buttons_frame.pack(side="right")  # this pushes buttons to the right
 
-# Change, and change due (converted to cents)
-change = []
-change_due = (pay - price) * 100
+def buy_item(item, price):
+  print(f"You bought {item} for ${price:.2f}")
 
-# Go through all coins and only add to change if it's the highest that can
-# be added without going below zero
-for coin in coins:
-  while change_due >= coin:
-    change_due -= coin
-    change.append(coin)
+for item, price in items.items():
+  text = f"{item}: ${price:.2f}"
+  btn = tk.Button(
+    buttons_frame,
+    text=text,
+    font=("Arial", 16),
+    width=15,
+    command=lambda i=item, p=price: buy_item(i, p)
+  )
+  btn.pack(pady=5)
 
-print("Thanks for paying! Here's your change:")
+# Bottom-right image
+photo = tk.PhotoImage(file="machine.png")
+img_label = tk.Label(root, image=photo)
+img_label.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)
 
-if not len(change):
-  print("<no change>")
-else:
-  # Print change in dollars
-  for c in change:
-    print(f"${c/100:.2f}")
+root.mainloop()
