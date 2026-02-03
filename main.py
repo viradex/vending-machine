@@ -9,14 +9,14 @@ items = {
 coins = [200, 100, 50, 20, 10, 5]
 
 # Ask for purchase letter and check if it exists
-purchase_ltr = input("What item would you like to buy? ").upper()
-if purchase_ltr not in items.keys():
-  print(f"Item {purchase_ltr} does not exist!")
+item = input("What item would you like to buy? ").upper()
+if item not in items.keys():
+  print(f"Item {item} does not exist!")
   exit(1)
 
 # Get price of item
-price = items[purchase_ltr]
-print(f"Item {purchase_ltr} costs ${price:.2f}!\n")
+price = items[item]
+print(f"Item {item} costs ${price:.2f}!\n")
 
 # Get payment from user, with validation check
 try:
@@ -27,7 +27,7 @@ except ValueError:
 
 # Check if payment is too low
 if price > pay:
-  print(f"You didn't pay enough! Item {purchase_ltr} costs ${price:.2f}, but you only paid ${pay:.2f}")
+  print(f"You didn't pay enough! Item {item} costs ${price:.2f}, but you only paid ${pay:.2f}")
   exit(1)
 
 print(f"You paid ${pay:.2f}!\n")
