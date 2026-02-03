@@ -8,8 +8,8 @@ items = {
   "E": 3.25,
 }
 
-min_stock = 0
-max_stock = 2
+min_stock = 5
+max_stock = 15
 coins = [
   { "value": 1000, "stock": randint(min_stock, max_stock) },
   { "value": 500, "stock": randint(min_stock, max_stock) },
@@ -47,6 +47,14 @@ def add_payment_to_stock(amount):
       amount -= coin["value"]
 
 print("VENDING MACHINE")
+
+print(f"\nAvailable items:")
+for item in items:
+  print(f"{item}: ${items[item]:.2f}")
+
+print("\nCoin stock:")
+for c in coins:
+  print(f"${c['value']/100:.2f}: {c['stock']}")
 
 while True:
   print(f"\nAvailable items: {", ".join(items.keys())}")
