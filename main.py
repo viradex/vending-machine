@@ -7,8 +7,8 @@ items = {
 }
 
 # In form: { value: stock }
-min_value = 2
-max_value = 5
+min_value = 5
+max_value = 10
 coins = {
 	200: randint(min_value, max_value),
 	100: randint(min_value, max_value),
@@ -17,6 +17,8 @@ coins = {
 	10: randint(min_value, max_value),
 	5: randint(min_value, max_value)
 }
+
+notes = [500, 1000, 2000]
 
 print("Available items:")
 for item in items:
@@ -35,7 +37,10 @@ while True:
 price = items[item]
 print(f"Item {item} costs ${price / 100:.2f}!\n")
 
-print("Accepted coins:")
+print("Accepted coins and notes:")
+for note in sorted(notes, reverse=True):
+	print(f"{note}¢ (${int(note/100)})")
+
 for coin in sorted(coins.keys(), reverse=True):
 	if coin >= 100:
 		print(f"{coin}¢ (${int(coin/100)})")
@@ -44,7 +49,7 @@ for coin in sorted(coins.keys(), reverse=True):
 
 total_paid = 0
 while True:
-	pay_input = input("\nWhat coin would you like to desposit (in cents)? ")
+	pay_input = input("\nWhat coin/note would you like to desposit (in cents)? ")
 
 	if not pay_input:
 		print("Exiting...")
@@ -56,12 +61,13 @@ while True:
 		print("The value entered is not a number!")
 		continue
 
-	if pay not in coins.keys():
+	if pay not in coins.keys() and pay not in notes:
 		print(f"The {pay}¢ coin is not accepted, sorry!")
 		continue
 	
 	total_paid += pay
-	coins[pay] += 1
+	if pay in coins.keys():
+		coins[pay] += 1
 
 	if total_paid >= price:
 		print(f"Thanks! Total inserted: ${total_paid/100:.2f}!")
@@ -101,7 +107,7 @@ if not len(change):
 else:
 	print("Thanks for paying! Here's your change:")
 
-	for coin in sorted(change, reverse=True):
+	for coin in sorted(set(change), reverse=True):
 		count = change.count(coin)
 		if count > 0:
 			print(f"{count} x ${coin/100:.2f}")

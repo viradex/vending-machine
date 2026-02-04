@@ -101,7 +101,7 @@ if not len(change):
 else:
 	print("Thanks for paying! Here's your change:")
 
-	for coin in sorted(change, reverse=True):
+	for coin in sorted(set(change), reverse=True):
 		count = change.count(coin)
 		if count > 0:
 			print(f"{count} x ${coin/100:.2f}")
