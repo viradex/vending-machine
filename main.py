@@ -1,16 +1,14 @@
-# Item prices are in dollars
 items = {
-	"A": 1.2,
-	"B": 0.6,
-	"C": 0.75,
+	"A": 120,
+	"B": 60,
+	"C": 75,
 }
 
-# Coins are in cents to avoid floating-point imprecision
 coins = [200, 100, 50, 20, 10, 5]
 
 print("Available items:")
 for item in items:
-	print(f"{item}: ${items[item]:.2f}")
+	print(f"{item}: ${items[item] / 100:.2f}")
 
 while True:
 	item = input("\nWhat item would you like to buy? ").upper()
@@ -22,35 +20,50 @@ while True:
 		print(f"The item {item} does not exist!")
 		continue
 
-# Get price of item
 price = items[item]
-print(f"Item {item} costs ${price:.2f}!\n")
+print(f"Item {item} costs ${price / 100:.2f}!\n")
 
-# Get payment from user, with validation check
-try:
-	pay = float(input("How much do you want to pay? "))
-except ValueError:
-	print("The value is not a number!")
-	exit(1)
+print("Accepted coins:")
+for coin in coins:
+	if coin >= 100:
+		print(f"{coin}¢ (${int(coin/100)})")
+	else:
+		print(f"{coin}¢")
 
-# Check if payment is too low
-if price > pay:
-	print(f"You didn't pay enough! Item {item} costs ${price:.2f}, but you only paid ${pay:.2f}")
-	exit(1)
+total_paid = 0
+while True:
+	pay_input = input("\nWhat coin would you like to desposit (in cents)? ")
 
-print(f"\nYou paid ${pay:.2f}!")
+	if not pay_input:
+		print("Exiting...")
+		exit(0)
 
-# Change, and change due (converted to cents)
+	try:
+		pay = int(pay_input)
+	except ValueError:
+		print("The value entered is not a number!")
+		continue
+
+	if pay not in coins:
+		print(f"The {pay}¢ coin is not accepted, sorry!")
+		continue
+	
+	total_paid += pay
+
+	if total_paid >= price:
+		print(f"Thanks, you paid for item {item} for ${total_paid/100:.2f}!")
+		break
+
+	print(f"Amount paid so far: ${total_paid/100:.2f} / ${price:.2f}")
+
 change = []
-change_due = (pay - price) * 100
+change_due = total_paid - price
 
 if not len(change):
 	print(f"Receiving change: ${change_due/100:.2f}")
 
 print()
 
-# Go through all coins and only add to change if it's the highest that can
-# be added without going below zero
 for coin in coins:
 	while change_due >= coin:
 		change_due -= coin
@@ -61,7 +74,6 @@ if not len(change):
 else:
 	print("Thanks for paying! Here's your change:")
 
-    # Print change in dollars
 	for coin in coins:
 		count = change.count(coin)
 		if count > 0:
