@@ -12,11 +12,15 @@ print("Available items:")
 for item in items:
 	print(f"{item}: ${items[item]:.2f}")
 
-# Ask for purchase letter and check if it exists
-item = input("\nWhat item would you like to buy? ").upper()
-if item not in items.keys():
-	print(f"Item {item} does not exist!")
-	exit(1)
+while True:
+	item = input("\nWhat item would you like to buy? ").upper()
+	if item in items.keys():
+		break
+	elif not item:
+		exit(0)
+	else:
+		print(f"The item {item} does not exist!")
+		continue
 
 # Get price of item
 price = items[item]
@@ -34,11 +38,16 @@ if price > pay:
 	print(f"You didn't pay enough! Item {item} costs ${price:.2f}, but you only paid ${pay:.2f}")
 	exit(1)
 
-print(f"You paid ${pay:.2f}!\n")
+print(f"\nYou paid ${pay:.2f}!")
 
 # Change, and change due (converted to cents)
 change = []
 change_due = (pay - price) * 100
+
+if not len(change):
+	print(f"Receiving change: ${change_due/100:.2f}")
+
+print()
 
 # Go through all coins and only add to change if it's the highest that can
 # be added without going below zero
