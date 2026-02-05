@@ -1,5 +1,14 @@
 from random import randint
 
+password = "1234"
+
+actions = {
+    "1": "Buy item",
+    "2": "Check coin stock",
+    "3": "Add coin stock",
+    "4": "Shut down",
+}
+
 items = {
     "A": 120,
     "B": 60,
@@ -21,22 +30,95 @@ coins = {
 notes = [500, 1000, 2000]
 
 
+def print_actions():
+    default = "buy"
+
+    print("Available actions:")
+    for action in actions:
+        print(f"{action}: {actions[action]} {"(default)" if action == default else ""}")
+
+
+def enter_password():
+    while True:
+        attempt = input("Enter password: ")
+        if attempt != password:
+            print("Incorrect password! Please try again.\n")
+            continue
+
+        return
+
+
+def get_coin_stock():
+    print("\nCoin stock:")
+    for coin in coins:
+        print(f"${coin/100:.2f}: {coins[coin]}")
+
+
 def print_items():
     print("Available items:")
     for item in items:
         print(f"{item}: ${items[item] / 100:.2f}")
 
 
-def print_currency():
-    print("Accepted coins and notes:")
-    for note in sorted(notes, reverse=True):
-        print(f"{note}¢ (${int(note/100)})")
+def print_currency(enter_coins=True, enter_notes=True):
+    if not enter_coins and not enter_notes:
+        raise ValueError("At least one of enter_coins or enter_notes must be True")
 
-    for coin in sorted(coins.keys(), reverse=True):
-        if coin >= 100:
-            print(f"{coin}¢ (${int(coin/100)})")
-        else:
-            print(f"{coin}¢")
+    if enter_coins and enter_notes:
+        print("Accepted coins and notes:")
+    elif enter_coins:
+        print("Accepted coins:")
+    elif enter_notes:
+        print("Accepted notes:")
+
+    if enter_notes:
+        for note in sorted(notes, reverse=True):
+            print(f"{note}¢ (${int(note/100)})")
+
+    if enter_coins:
+        for coin in sorted(coins.keys(), reverse=True):
+            if coin >= 100:
+                print(f"{coin}¢ (${int(coin/100)})")
+            else:
+                print(f"{coin}¢")
+
+
+def add_coin_stock():
+    print_currency(True, False)
+
+    while True:
+        print("\n(to exit, enter nothing)")
+        refill_input = input("What coin would you like to refill (in cents)? ")
+
+        if not refill_input:
+            return
+
+        try:
+            refill = int(refill_input)
+        except ValueError:
+            print("The value entered is not a number!")
+            continue
+
+        if refill not in coins.keys():
+            print(f"{refill}¢ is not accepted, sorry!")
+            continue
+
+        value_input = input(
+            f"How many coins would you like to add to the already existing stock of {coins[refill]}? "
+        )
+
+        try:
+            value = int(value_input)
+        except ValueError:
+            print("The value entered is not a number!")
+            continue
+
+        if value <= 0 or value > 50:
+            print("Value is out of range! Must be between 1-50.")
+            continue
+
+        coins[refill] += value
+        print(f"New stock of ${refill/100:.2f}: {coins[refill]}")
 
 
 def select_item():
@@ -116,6 +198,25 @@ def print_change(change):
 
 
 while True:
+    print_actions()
+    action = input("\nWhat action would you like to do? ").lower()
+
+    if action == "2":
+        get_coin_stock()
+        print()
+
+        continue
+    elif action == "3":
+        enter_password()
+        add_coin_stock()
+        print()
+
+        continue
+    elif action == "4":
+        print("Shutting down...")
+        break
+
+    # For action == 'buy'
     print_items()
 
     item = select_item()
